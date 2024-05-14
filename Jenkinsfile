@@ -21,7 +21,7 @@ pipeline {
                 script {
                     // Run unit tests for the backend
                     dir('/home/aditya/adityamin/MLOPS/mlops/src') {
-                        sh 'python -m unittest discover tests'
+                        sh 'python3 -m unittest discover tests'
                     }
                 }
             }
