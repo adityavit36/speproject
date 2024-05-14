@@ -19,6 +19,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
+                    sh 'pip install flake8'
                     sh 'flake8 .'
                     sh 'black --check .'
                     // Run unit tests for the backend
