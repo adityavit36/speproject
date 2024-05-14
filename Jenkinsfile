@@ -12,7 +12,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the code from the GitHub repository
-                git branch: 'main', 
+                git branch: 'master', 
                 url: 'https://github.com/adityavit36/speproject.git'
             }
         }
