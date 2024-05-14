@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  model-loader:
+    image: adityavit36/model-loader
+    # No need for volumes in this case
+    # Other configurations for model-loader
+
+  predictor:
+    image: adityavit36/predictor-app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - model-loader
+    environment:
+      - MODEL_PATH=/app  # Assuming model_file.pkl is in the same directory as predictor.py and model_loader.py
+    # Other configurations for predictor-app
+
+  carprice:
+    image: adityavit36/carprice
+    ports:
+      - "3000:3000"
+    environment:
+      - PREDICTOR_URL=http://predictor:5000/predict
+    # Other configurations for carprice
+
