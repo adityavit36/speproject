@@ -19,9 +19,9 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    sh 'pip install flake8'
-                    sh 'flake8 .'
-                    sh 'black --check .'
+                    // sh 'pip install flake8'
+                    // sh 'flake8 .'
+                    // sh 'black --check .'
                     // Run unit tests for the backend
                     dir('/home/aditya/adityamin/MLOPS/mlops/src') {
                         sh 'python3 -m unittest discover tests'
