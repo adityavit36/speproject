@@ -16,7 +16,16 @@ pipeline {
                 url: 'https://github.com/adityavit36/speproject.git'
             }
         }
-        
+        stage('Test') {
+            steps {
+                script {
+                    // Run unit tests for the backend
+                    dir('/home/aditya/adityamin/MLOPS/mlops/src') {
+                        sh 'python -m unittest discover tests'
+                    }
+                }
+            }
+        }
         stage('Build Docker Images') {
             steps {
                 script {
@@ -31,7 +40,6 @@ pipeline {
                 }
             }
         }
-
         stage('Run Docker Compose') {
             steps {
                 script {
