@@ -29,17 +29,20 @@ pipeline {
                 }
             }
         }
-        stage('Build Docker Images') {
+        stage('Build and Push Docker Images') {
             steps {
                 script {
-                    // Build carprice Docker image
+                    // Build Docker images
                     sh 'docker build -t carprice -f /home/aditya/adityamin/MLOPS/mlops/src/react_docker /home/aditya/adityamin/MLOPS/mlops'
-                    
-                    // Build predictor-app Docker image
                     sh 'docker build -t predictor-app -f /home/aditya/adityamin/MLOPS/mlops/src/predictor-app /home/aditya/adityamin/MLOPS/mlops/src'
-                    
-                    // Build model-loader Docker image
                     sh 'docker build -t model-loader -f /home/aditya/adityamin/MLOPS/mlops/src/model_loader_dockerfile /home/aditya/adityamin/MLOPS/mlops/src'
+        
+                    // Tag and push Docker images
+                    docker.withRegistry('', 'docker-hub-credentials') {
+                        docker.image('carprice').push('adityavit36/carprice:latest')
+                        docker.image('predictor-app').push('adityavit36/predictor-app:latest')
+                        docker.image('model-loader').push('adityavit36/model-loader:latest')
+                    }
                 }
             }
         }
