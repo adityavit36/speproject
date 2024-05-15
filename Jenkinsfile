@@ -27,23 +27,23 @@ pipeline {
         //         }
         //     }
         // }
-        // stage('Build and Push Docker Images') {
-        //     steps {
-        //         script {
-        //             // Build Docker images
-        //             sh 'docker build -t adityavit36/carprice -f /home/aditya/adityamin/MLOPS/mlops/src/react_docker /home/aditya/adityamin/MLOPS/mlops'
-        //             sh 'docker build -t adityavit36/predictor-app -f /home/aditya/adityamin/MLOPS/mlops/src/predictor-app /home/aditya/adityamin/MLOPS/mlops/src'
-        //             sh 'docker build -t adityavit36/model-loader -f /home/aditya/adityamin/MLOPS/mlops/src/model_loader_dockerfile /home/aditya/adityamin/MLOPS/mlops/src'
+        stage('Build and Push Docker Images') {
+            steps {
+                script {
+                    // Build Docker images
+                    sh 'docker build -t adityavit36/carprice -f /home/aditya/adityamin/MLOPS/mlops/src/react_docker /home/aditya/adityamin/MLOPS/mlops'
+                    sh 'docker build -t adityavit36/predictor-app -f /home/aditya/adityamin/MLOPS/mlops/src/predictor-app /home/aditya/adityamin/MLOPS/mlops/src'
+                    sh 'docker build -t adityavit36/model-loader -f /home/aditya/adityamin/MLOPS/mlops/src/model_loader_dockerfile /home/aditya/adityamin/MLOPS/mlops/src'
         
-        //             // Tag and push Docker images
-        //             docker.withRegistry('', 'docker-hub-credentials') {
-        //                 docker.image('adityavit36/carprice').push('latest')
-        //                 docker.image('adityavit36/predictor-app').push('latest')
-        //                 docker.image('adityavit36/model-loader').push('latest')
-        //             }
-        //         }
-        //     }
-        // }
+                    // Tag and push Docker images
+                    docker.withRegistry('', 'docker-hub-credentials') {
+                        docker.image('adityavit36/carprice').push('latest')
+                        docker.image('adityavit36/predictor-app').push('latest')
+                        docker.image('adityavit36/model-loader').push('latest')
+                    }
+                }
+            }
+        }
         stage('Run Docker Compose') {
             steps {
                 script {
