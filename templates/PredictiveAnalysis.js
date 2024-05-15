@@ -32,7 +32,7 @@ const handleSubmit = async (e) => {
   };
 
   try {
-    const response = await fetch('http://predictor:5000/predict', {
+    const response = await fetch('http://localhost:5000/predict', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

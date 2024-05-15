@@ -9,5 +9,5 @@ COPY model_loader.py .
 COPY random_forest_regression_model.pkl .
 
 # Command to run the model loader (optional)
-CMD ["python", "model_loader.py"]
+CMD ["python3", "model_loader.py"]
 
