@@ -48,13 +48,12 @@ pipeline {
                 }
             }
         }
-        stage('Run Docker Compose') {
+        stage('Run Ansible Playbook') {
             steps {
-                script {
-                    dir('/home/aditya/adityamin/MLOPS/mlops/src') {
-                        sh '/usr/local/bin/docker-compose up -d'
-                    }
-                }
+                ansiblePlaybook(
+                    playbook: 'deploy.yml',
+                    inventory: 'inventory'
+                )
             }
         }
     }
