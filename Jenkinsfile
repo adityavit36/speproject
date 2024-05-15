@@ -37,14 +37,25 @@ pipeline {
                 }
             }
         }
-        stage('Run Ansible Playbook') {
+        stage('Push Docker Images') {
             steps {
-                ansiblePlaybook(
-                    playbook: 'deploy.yml',
-                    inventory: 'inventory'
-                )
+                script {
+                    docker.withRegistry('', 'DockerHubCred') {
+                        sh 'docker push adityavit36/carprice:latest'
+                        sh 'docker push adityavit36/predictor-app:latest'
+                        sh 'docker push adityavit36/model-loader:latest'
+                    }
+                }
             }
         }
-        
+        stage('Run Docker Compose') {
+            steps {
+                script {
+                    dir('/home/aditya/adityamin/MLOPS/mlops/src') {
+                        sh '/usr/local/bin/docker-compose up -d'
+                    }
+                }
+            }
+        }
     }
 }
