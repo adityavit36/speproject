@@ -40,10 +40,11 @@ pipeline {
         stage('Push Docker Images') {
             steps {
                 script {
-                    // Build Docker images
-                    sh 'docker push adityavit36/carprice:latest'
-                    sh 'docker push adityavit36/predictor-app:latest'
-                    sh 'docker push adityavit36/model-loader:latest'
+                    docker.withRegistry('', 'DockerHubCred') {
+                        sh 'docker push adityavit36/carprice:latest'
+                        sh 'docker push adityavit36/predictor-app:latest'
+                        sh 'docker push adityavit36/model-loader:latest'
+                    }
                 }
             }
         }
