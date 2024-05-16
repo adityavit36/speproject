@@ -6,7 +6,10 @@
     project_dir: /home/ec2-user/spe-project  # Path to your project directory on the EC2 instance
 
   tasks:
-
+    - name: Set permissions for private key file
+      file:
+        path: /home/ec2-user/spe-project
+        mode: '0400'
     - name: Install Python 2
       raw: test -e /usr/bin/python3 || (apt-get update && apt-get install -y python3)
       become: true
