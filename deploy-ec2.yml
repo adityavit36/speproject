@@ -1,0 +1,55 @@
+---
+- hosts: ec2 # Change 'localhost' to 'ec2'
+  become: yes # Run tasks with sudo privileges
+
+  vars:
+    project_dir: /path/to/your/project # Path to your project directory on the EC2 instance
+
+  tasks:
+    - name: Install Docker
+      yum:
+        name: docker
+        state: present
+
+    - name: Install Docker Compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-{{ ansible_system | lower }}-{{ ansible_architecture | lower }}
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x'
+
+    - name: Pull Docker images
+      docker_image:
+        name: "{{ item }}"
+        source: pull
+      loop:
+        - "adityavit36/carprice:latest"
+        - "adityavit36/predictor-app:latest"
+        - "adityavit36/model-loader:latest"
+
+    - name: Create Docker Compose file
+      copy:
+        content: |
+          version: '3.7'
+          services:
+            model-loader:
+              image: adityavit36/model-loader
+            predictor:
+              image: adityavit36/predictor-app
+              ports:
+                - "5000:5000"
+              depends_on:
+                - model-loader
+              environment:
+                - MODEL_PATH=/app
+            carprice:
+              image: adityavit36/carprice
+              ports:
+                - "3000:3000"
+              environment:
+                - PREDICTOR_URL=http://localhost:5000/predict
+        dest: "{{ project_dir }}/docker-compose.yml"
+
+    - name: Run Docker Compose
+      community.docker.docker_compose:
+        project_src: "{{ project_dir }}"
+        state: present
