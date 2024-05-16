@@ -5,6 +5,7 @@ pipeline {
         CARPRICE_IMAGE_NAME = 'carprice'
         PREDICTOR_IMAGE_NAME = 'predictor-app'
         MODEL_LOADER_IMAGE_NAME = 'model-loader'
+	EC2_INSTANCE_IP = 'your-ec2-instance-public-ip'
     }
     stages {
         stage('Checkout') {
