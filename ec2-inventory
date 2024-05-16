@@ -1,2 +1,2 @@
 [ec2]
-65.0.248.48
+65.0.248.48 ansible_python_interpreter=/usr/bin/python3.9
