@@ -48,13 +48,21 @@ pipeline {
                 }
             }
         }
-        stage('Run Ansible Playbook') {
-            steps {
-                ansiblePlaybook(
-                    playbook: 'deploy.yml',
-                    inventory: 'inventory'
-                )
-            }
-        }
+        // stage('Run Ansible Playbook') {
+        //     steps {
+        //         ansiblePlaybook(
+        //             playbook: 'deploy.yml',
+        //             inventory: 'inventory'
+        //         )
+        //     }
+        // }
+        stage('Deploy to EC2') {
+	        steps {
+	            ansiblePlaybook(
+	                playbook: 'deploy-ec2.yml',
+	                inventory: 'ec2-inventory'
+	            )
+    	    }
+    	}
     }
 }
