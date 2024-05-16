@@ -27,11 +27,7 @@
         state: present
         update_cache: true
       become: true
-    
-    - name: Install Docker
-      dnf:
-        name: docker
-        state: present
+  
 
     - name: Install Docker Compose
       get_url:
