@@ -16,7 +16,7 @@
       changed_when: false
 
     - name: Install Docker
-      yum:
+      dnf:
         name: docker
         state: present
 
