@@ -1,11 +1,17 @@
 ---
-- hosts: ec2 # Change 'localhost' to 'ec2'
-  become: yes # Run tasks with sudo privileges
+- hosts: ec2  # Change 'localhost' to 'ec2'
+  become: yes  # Run tasks with sudo privileges
 
   vars:
-    project_dir: /home/ec2-user/spe-project # Path to your project directory on the EC2 instance
+    project_dir: /home/ec2-user/spe-project  # Path to your project directory on the EC2 instance
 
   tasks:
+
+    - name: Install Python 2
+      raw: test -e /usr/bin/python3 || (apt-get update && apt-get install -y python3)
+      become: true
+      changed_when: false
+
     - name: Install Docker
       yum:
         name: docker
