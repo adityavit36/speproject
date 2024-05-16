@@ -61,7 +61,9 @@ pipeline {
 	        steps {
 	            ansiblePlaybook(
 	                playbook: 'deploy-ec2.yml',
-	                inventory: 'ec2-inventory'
+	                inventory: 'ec2-inventory',
+			credentialsId: '41668044-b19d-41a2-98ac-6d281b0a30d9',
+			extras: '-e ansible_user=ec2-user -e ansible_ssh_private_key_file=/home/aditya/Downloads'
 	            )
     	    }
     	}
