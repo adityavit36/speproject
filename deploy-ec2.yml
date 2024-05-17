@@ -10,7 +10,7 @@
       setup:
 
     - name: Install Python 3
-      yum:
+      dnf:
         name:
           - python3
           - python3-pip
