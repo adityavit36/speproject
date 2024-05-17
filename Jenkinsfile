@@ -56,7 +56,7 @@ pipeline {
         //             inventory: 'inventory'
         //         )
         //     }
-        }
+        //}
         stage('Deploy to EC2') {
 	        steps {
 	            ansiblePlaybook(
