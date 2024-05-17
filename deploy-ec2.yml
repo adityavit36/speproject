@@ -9,33 +9,11 @@
     - name: Gathering Facts
       setup:
 
-    - name: Install Python 3 and pip3
-      dnf:
-        name:
-          - python3
-          - python3-pip
-        state: present
-
-    - name: Ensure pip is upgraded
-      command: python3 -m pip install --upgrade pip
-
-    - name: Install Docker Python library with ignore-installed option
-      pip:
-        name: docker
-        state: present
-        extra_args: --ignore-installed requests
-
     - name: Ensure Docker service is running
       systemd:
         name: docker
         state: started
         enabled: yes
-
-    - name: Install Docker Compose
-      get_url:
-        url: https://github.com/docker/compose/releases/download/v2.20.0/docker-compose-{{ ansible_system | lower }}-{{ ansible_architecture | lower }}
-        dest: /usr/local/bin/docker-compose
-        mode: 'u+x'
 
     - name: Pull Docker images
       docker_image:
