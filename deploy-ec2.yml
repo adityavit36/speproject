@@ -1,9 +1,9 @@
 ---
 - hosts: ec2
   become: yes
-
   vars:
     project_dir: /home/ec2-user/spe-project
+    ansible_python_interpreter: /usr/bin/python3  # Ensure Ansible uses the correct Python interpreter
 
   tasks:
     - name: Gathering Facts
