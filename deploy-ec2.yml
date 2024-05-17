@@ -15,6 +15,11 @@
         state: started
         enabled: yes
 
+    - name: Install Docker Compose using pip
+      pip:
+        name: docker-compose
+        state: present
+
     - name: Pull Docker images
       docker_image:
         name: "{{ item }}"
