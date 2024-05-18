@@ -48,7 +48,7 @@
               ports:
                 - "3000:3000"
               environment:
-                - PREDICTOR_URL=http://65.0.248.48:5000/predict
+                - PREDICTOR_URL=http://predictor:5000/predict
         dest: "{{ project_dir }}/docker-compose.yml"
 
     - name: Run Docker Compose
