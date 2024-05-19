@@ -2,12 +2,12 @@ version: '3.7'
 
 services:
   model-loader:
-    image: adityavit36/model-loader
+    image: adityavit36/model1
     # No need for volumes in this case
     # Other configurations for model-loader
 
   predictor:
-    image: adityavit36/predictor-app
+    image: adityavit36/pred1
     ports:
       - "5000:5000"
     depends_on:
@@ -17,11 +17,9 @@ services:
     # Other configurations for predictor-app
 
   carprice:
-    image: adityavit36/carprice
+    image: adityavit36/car1
     ports:
       - "3000:3000"
     environment:
-      - PREDICTOR_URL = http://65.0.248.48:5000/predict
-      # - PREDICTOR_URL=http://localhost:5000/predict
+       - PREDICTOR_URL=http://localhost:5000/predict
     # Other configurations for carprice
-
