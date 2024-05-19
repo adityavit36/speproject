@@ -5,9 +5,9 @@ from flask_cors import CORS
 from model_loader import load_model
 
 app = Flask(__name__)
-# CORS(app)
+CORS(app)
 # CORS(app, resources={r"/*": {"origins": "http://65.0.248.48:3000"}})
-CORS(app, resources={r"/*": {"origins": "*"}})
+# CORS(app, resources={r"/*": {"origins": "*"}})
 
 model_path = './random_forest_regression_model.pkl'
 model = load_model(model_path)
