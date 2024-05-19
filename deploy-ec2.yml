@@ -3,7 +3,7 @@
   become: yes
   vars:
     project_dir: /home/ec2-user/spe-project
-    ansible_python_interpreter: /usr/bin/python3  # Ensure Ansible uses the correct Python interpreter
+    ansible_python_interpreter: /usr/bin/python3 # Ensure Ansible uses the correct Python interpreter
 
   tasks:
     - name: Gathering Facts
@@ -32,6 +32,7 @@
     - name: Create Docker Compose file
       copy:
         content: |
+          version: '3'
           services:
             model-loader:
               image: adityavit36/model-loader
@@ -49,6 +50,24 @@
                 - "3000:3000"
               environment:
                 - PREDICTOR_URL=http://65.0.248.48:5000/predict
+            elasticsearch:
+              image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+              environment:
+                - discovery.type=single-node
+              ports:
+                - "9200:9200"
+            logstash:
+              image: docker.elastic.co/logstash/logstash:7.17.9
+              ports:
+                - "5044:5044"
+              volumes:
+                - ./logstash/config:/usr/share/logstash/pipeline
+            kibana:
+              image: docker.elastic.co/kibana/kibana:7.17.9
+              ports:
+                - "5601:5601"
+              depends_on:
+                - elasticsearch
         dest: "{{ project_dir }}/docker-compose.yml"
 
     - name: Run Docker Compose
