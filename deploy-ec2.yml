@@ -3,19 +3,23 @@
   become: yes
   vars:
     project_dir: /home/ec2-user/spe-project
-    ansible_python_interpreter: /usr/bin/python3  # Ensure Ansible uses the correct Python interpreter
+    ansible_python_interpreter: /usr/bin/python3 # Ensure Ansible uses the correct Python interpreter
+
   tasks:
     - name: Gathering Facts
       setup:
+
     - name: Ensure Docker service is running
       systemd:
         name: docker
         state: started
         enabled: yes
+
     - name: Install Docker Compose using pip
       pip:
         name: docker-compose
         state: present
+
     - name: Pull Docker images
       docker_image:
         name: "{{ item }}"
@@ -24,9 +28,15 @@
         - "adityavit36/carprice:latest"
         - "adityavit36/predictor-app:latest"
         - "adityavit36/model-loader:latest"
+        - "docker.elastic.co/elasticsearch/elasticsearch:7.17.9"
+        - "docker.elastic.co/kibana/kibana:7.17.9"
+        - "docker.elastic.co/logstash/logstash:7.17.9"
+        - "docker.elastic.co/beats/filebeat:7.17.9"
+
     - name: Create Docker Compose file
       copy:
         content: |
+          version: '3'
           services:
             model-loader:
               image: adityavit36/model-loader
@@ -45,7 +55,62 @@
               environment:
                 - PREDICTOR_URL=http://predictor:5000/predict
                 - PREDICTOR_URL=http://65.0.248.48:5000/predict
+            elasticsearch:
+              image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+              environment:
+                - discovery.type=single-node
+              ports:
+                - "9200:9200"
+            kibana:
+              image: docker.elastic.co/kibana/kibana:7.17.9
+              ports:
+                - "5601:5601"
+              depends_on:
+                - elasticsearch
+            logstash:
+              image: docker.elastic.co/logstash/logstash:7.17.9
+              ports:
+                - "5044:5044"
+              depends_on:
+                - elasticsearch
+              volumes:
+                - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+            filebeat:
+              image: docker.elastic.co/beats/filebeat:7.17.9
+              depends_on:
+                - logstash
+              volumes:
+                - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+                - /var/lib/docker/containers:/var/lib/docker/containers:ro
+                - /var/run/docker.sock:/var/run/docker.sock:ro
         dest: "{{ project_dir }}/docker-compose.yml"
+
+    - name: Create Logstash configuration file
+      copy:
+        content: |
+          input {
+            beats {
+              port => 5044
+            }
+          }
+          output {
+            elasticsearch {
+              hosts => ["http://elasticsearch:9200"]
+              index => "logstash-%{+YYYY.MM.dd}"
+            }
+          }
+        dest: "{{ project_dir }}/logstash.conf"
+
+    - name: Create Filebeat configuration file
+      copy:
+        content: |
+          filebeat.inputs:
+            - type: container
+              paths:
+                - /var/lib/docker/containers/*/*.log
+          output.logstash:
+            hosts: ["logstash:5044"]
+        dest: "{{ project_dir }}/filebeat.yml"
 
     - name: Run Docker Compose
       command: docker-compose up -d
