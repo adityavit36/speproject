@@ -3,6 +3,10 @@ version: '3.7'
 services:
   model-loader:
     image: adityavit36/model1
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://logstash:12201"
     # No need for volumes in this case
     # Other configurations for model-loader
 
@@ -14,6 +18,10 @@ services:
       - model-loader
     environment:
       - MODEL_PATH=/app  # Assuming model_file.pkl is in the same directory as predictor.py and model_loader.py
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://logstash:12201"
     # Other configurations for predictor-app
 
   carprice:
@@ -22,4 +30,38 @@ services:
       - "3000:3000"
     environment:
        - PREDICTOR_URL=http://localhost:5000/predict
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://logstash:12201"
     # Other configurations for carprice
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+    environment:
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.9
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.17.9
+    ports:
+      - "5044:5044"
+      - "12201:12201/udp"
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+
+volumes:
+  esdata:
+
