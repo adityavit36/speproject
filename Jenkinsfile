@@ -76,7 +76,7 @@ pipeline {
                 )
             }
         }
-   //     // stage('Deploy to EC2') {
+       // stage('Deploy to EC2') {
 	  //       steps {
 	  //           ansiblePlaybook(
 	  //               playbook: 'deploy-ec2.yml',
