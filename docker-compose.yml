@@ -37,11 +37,16 @@ services:
     environment:
       - discovery.type=single-node
     ports:
-      - "9201:9200"  # Changed from 9200:9200 to 9201:9200
+      - "9201:9200"
     volumes:
       - esdata:/usr/share/elasticsearch/data
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.17.9
