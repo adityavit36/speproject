@@ -1,6 +1,7 @@
 version: '3.7'
 
 services:
+
   model-loader:
     image: adityavit36/model1
     depends_on:
