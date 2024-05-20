@@ -35,13 +35,13 @@ services:
     environment:
       - discovery.type=single-node
     ports:
-      - "9201:9200"  # Expose port 9200 on port 9201
+      - "9201:9200"  # Exposing internal port 9200 to external port 9201
     volumes:
       - esdata:/usr/share/elasticsearch/data
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]  # Update this line
+      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]  # Keep as localhost:9200 since it's internal
       interval: 30s
       timeout: 10s
       retries: 5
@@ -53,7 +53,7 @@ services:
     depends_on:
       - elasticsearch
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9201  # Updated Elasticsearch URL
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9201  # Ensure it points to the correct port
     networks:
       - app-network
 
@@ -67,7 +67,7 @@ services:
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     environment:
-      - xpack.monitoring.elasticsearch.hosts=["http://elasticsearch:9201"]  # Updated Elasticsearch URL
+      - xpack.monitoring.elasticsearch.hosts=["http://elasticsearch:9201"]
     networks:
       - app-network
 
