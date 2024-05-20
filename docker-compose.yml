@@ -1,13 +1,12 @@
 version: '3.7'
 
 services:
-
   model-loader:
     image: adityavit36/model1
-    # No need for volumes in this case
-    # Other configurations for model-loader
     depends_on:
       - logstash
+    networks:
+      - elastic-net
 
   predictor:
     image: adityavit36/pred1
@@ -17,7 +16,9 @@ services:
       - model-loader
       - logstash
     environment:
-      - MODEL_PATH=/app # Assuming model_file.pkl is in the same directory as predictor.py and model_loader.py
+      - MODEL_PATH=/app
+    networks:
+      - elastic-net
 
   carprice:
     image: adityavit36/car1
@@ -27,6 +28,8 @@ services:
       - PREDICTOR_URL=http://localhost:5000/predict
     depends_on:
       - logstash
+    networks:
+      - elastic-net
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
@@ -36,6 +39,8 @@ services:
       - "9201:9200"
     volumes:
       - esdata:/usr/share/elasticsearch/data
+    networks:
+      - elastic-net
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.17.9
@@ -43,6 +48,8 @@ services:
       - "5601:5601"
     depends_on:
       - elasticsearch
+    networks:
+      - elastic-net
 
   logstash:
     image: docker.elastic.co/logstash/logstash:7.17.9
@@ -53,6 +60,12 @@ services:
       - elasticsearch
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    networks:
+      - elastic-net
 
 volumes:
   esdata:
+
+networks:
+  elastic-net:
+    driver: bridge
