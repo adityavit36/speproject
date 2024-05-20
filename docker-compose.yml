@@ -1,14 +1,13 @@
 version: '3.7'
 
 services:
+
   model-loader:
     image: adityavit36/model1
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://logstash:12201"
     # No need for volumes in this case
     # Other configurations for model-loader
+    depends_on:
+      - logstash
 
   predictor:
     image: adityavit36/pred1
@@ -16,25 +15,18 @@ services:
       - "5000:5000"
     depends_on:
       - model-loader
+      - logstash
     environment:
-      - MODEL_PATH=/app  # Assuming model_file.pkl is in the same directory as predictor.py and model_loader.py
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://logstash:12201"
-    # Other configurations for predictor-app
+      - MODEL_PATH=/app # Assuming model_file.pkl is in the same directory as predictor.py and model_loader.py
 
   carprice:
     image: adityavit36/car1
     ports:
       - "3000:3000"
     environment:
-       - PREDICTOR_URL=http://localhost:5000/predict
-    logging:
-      driver: "gelf"
-      options:
-        gelf-address: "udp://logstash:12201"
-    # Other configurations for carprice
+      - PREDICTOR_URL=http://predictor:5000/predict
+    depends_on:
+      - logstash
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
@@ -64,4 +56,3 @@ services:
 
 volumes:
   esdata:
-
