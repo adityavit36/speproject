@@ -56,7 +56,9 @@ services:
       - elasticsearch
     networks:
       - app-network
-  
+    environment:
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9201"  # Pointing to the correct port
+
   logstash:
     image: docker.elastic.co/logstash/logstash:7.17.9
     ports:
