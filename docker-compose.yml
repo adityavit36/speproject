@@ -1,10 +1,38 @@
-version: '3'
+version: '3.7'
 services:
+  model-loader:
+    image: adityavit36/model1
+    depends_on:
+      - logstash
+    networks:
+      - app-network
+  predictor:
+    image: adityavit36/pred1
+    ports:
+      - "5000:5000"
+    depends_on:
+      - model-loader
+      - logstash
+    environment:
+      - MODEL_PATH=/app
+    networks:
+      - app-network
+  carprice:
+    image: adityavit36/car1
+    ports:
+      - "3000:3000"
+    environment:
+      - PREDICTOR_URL=http://predictor:5000/predict
+    depends_on:
+      - logstash
+    networks:
+      - app-network
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
     environment:
       - discovery.type=single-node
     ports:
+      - "9201:9200"  # Changed from 9200:9200 to 9201:9200
       - "9201:9200"
     volumes:
       - esdata:/usr/share/elasticsearch/data
@@ -24,12 +52,31 @@ services:
       - elasticsearch
     networks:
       - app-network
-    environment:
-      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"  # This line ensures Kibana connects to Elasticsearch correctly
-
+  
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.17.9
+    ports:
+      - "5044:5044"
+      - "12201:12201/udp"
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    networks:
+      - app-network
+  
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.17.9
+    depends_on:
+      - logstash
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - app-network
+volumes:
+  esdata:
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  esdata:
