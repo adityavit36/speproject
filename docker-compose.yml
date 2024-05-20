@@ -60,7 +60,7 @@ services:
     depends_on:
       - elasticsearch
     volumes:
-      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - /home/aditya/adityamin/MLOPS/mlops/src/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     networks:
       - elastic-net
 
