@@ -6,6 +6,8 @@ services:
     image: adityavit36/model1
     depends_on:
       - logstash
+    networks:
+      - app-network
 
   predictor:
     image: adityavit36/pred1
@@ -16,15 +18,19 @@ services:
       - logstash
     environment:
       - MODEL_PATH=/app
+    networks:
+      - app-network
 
   carprice:
     image: adityavit36/car1
     ports:
       - "3000:3000"
     environment:
-      - PREDICTOR_URL=http://localhost:5000/predict
+      - PREDICTOR_URL=http://predictor:5000/predict
     depends_on:
       - logstash
+    networks:
+      - app-network
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
@@ -34,6 +40,8 @@ services:
       - "9200:9200"
     volumes:
       - esdata:/usr/share/elasticsearch/data
+    networks:
+      - app-network
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.17.9
@@ -41,6 +49,8 @@ services:
       - "5601:5601"
     depends_on:
       - elasticsearch
+    networks:
+      - app-network
 
   logstash:
     image: docker.elastic.co/logstash/logstash:7.17.9
@@ -51,10 +61,12 @@ services:
       - elasticsearch
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    networks:
+      - app-network
 
 volumes:
   esdata:
 
 networks:
-  default:
+  app-network:
     driver: bridge
