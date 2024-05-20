@@ -6,6 +6,7 @@ services:
       - logstash
     networks:
       - app-network
+
   predictor:
     image: adityavit36/pred1
     ports:
@@ -17,6 +18,7 @@ services:
       - MODEL_PATH=/app
     networks:
       - app-network
+
   carprice:
     image: adityavit36/car1
     ports:
@@ -27,13 +29,13 @@ services:
       - logstash
     networks:
       - app-network
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
     environment:
       - discovery.type=single-node
     ports:
-      - "9201:9200"  # Changed from 9200:9200 to 9201:9200
-      - "9201:9200"
+      - "9201:9200"  # Expose port 9200 on port 9201
     volumes:
       - esdata:/usr/share/elasticsearch/data
     networks:
@@ -50,9 +52,11 @@ services:
       - "5601:5601"
     depends_on:
       - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9201  # Updated Elasticsearch URL
     networks:
       - app-network
-  
+
   logstash:
     image: docker.elastic.co/logstash/logstash:7.17.9
     ports:
@@ -62,9 +66,11 @@ services:
       - elasticsearch
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    environment:
+      - xpack.monitoring.elasticsearch.hosts=["http://elasticsearch:9201"]  # Updated Elasticsearch URL
     networks:
       - app-network
-  
+
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.17.9
     depends_on:
@@ -75,8 +81,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - app-network
+
 volumes:
   esdata:
+
 networks:
   app-network:
     driver: bridge
