@@ -74,7 +74,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - app-network
- 
 
 volumes:
   esdata:
