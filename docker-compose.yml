@@ -51,7 +51,7 @@ services:
       - elasticsearch
     networks:
       - app-network
-
+  
   logstash:
     image: docker.elastic.co/logstash/logstash:7.17.9
     ports:
@@ -63,6 +63,18 @@ services:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
     networks:
       - app-network
+  
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.17.9
+    depends_on:
+      - logstash
+    volumes:
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - app-network
+ 
 
 volumes:
   esdata:
