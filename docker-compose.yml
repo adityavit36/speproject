@@ -86,6 +86,7 @@ services:
 
 volumes:
   esdata:
+     driver: local
 
 networks:
   app-network:
