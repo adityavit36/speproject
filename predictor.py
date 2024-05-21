@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import numpy as np
 import logging
+from logging.handlers import RotatingFileHandler
 from flask_cors import CORS
 from model_loader import load_model
 
@@ -12,8 +13,20 @@ CORS(app)
 model_path = './random_forest_regression_model.pkl'
 model = load_model(model_path)
 
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Create a file handler object
+file_handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=3)
+file_handler.setLevel(logging.INFO)
+
+# Create a logging format
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+# Add the file handler to the logger
+logger.addHandler(file_handler)
 
 @app.route("/predict", methods=['POST'])
 def predict():
@@ -47,4 +60,3 @@ def predict():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-
