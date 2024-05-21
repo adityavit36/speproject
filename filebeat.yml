@@ -1,7 +1,12 @@
 filebeat.inputs:
-- type: container
+- type: log
   paths:
-    - /var/lib/docker/containers/*/*.log
+    - /home/aditya/adityamin/MLOPS/mlops/src/app.log
+  fields:
+    log_type: flask_app_log
+
+processors:
+  - add_docker_metadata: ~
 
 output.logstash:
   hosts: ["logstash:5044"]
