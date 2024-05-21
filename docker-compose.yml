@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   model-loader:
     image: adityavit36/model1
@@ -82,6 +83,7 @@ services:
       - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /path/to/your/logs:/path/to/your/logs:ro  # Mount the directory containing the log file
     networks:
       - app-network
 
