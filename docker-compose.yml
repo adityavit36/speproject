@@ -17,6 +17,8 @@ services:
       - logstash
     environment:
       - MODEL_PATH=/app
+    volumes:
+      - /home/aditya/adityamin/MLOPS/mlops/src:/app/logs  # Mount the logs directory from the host
     networks:
       - app-network
 
@@ -81,9 +83,9 @@ services:
       - logstash
     volumes:
       - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /home/aditya/adityamin/MLOPS/mlops/src:/app/logs  # Mount the logs directory from the host
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /path/to/your/logs:/path/to/your/logs:ro  # Mount the directory containing the log file
     networks:
       - app-network
 
