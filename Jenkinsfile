@@ -29,7 +29,7 @@ pipeline {
                     // sh 'flake8 .'
                     // sh 'black --check .'
                     // Run unit tests for the backend
-		    sh 'pip install flask numpy flask_cors==4.0.0 scikit-learn==1.3.0'
+		    sh 'pip install flask flask_cors==4.0.0 numpy scikit-learn==1.3.0'
                     dir('/home/aditya/adityamin/MLOPS/mlops/src') {
 			sh 'python3 -m unittest discover -s . -p "test_app.py" > test_results.log 2>&1'                    
 		    }
