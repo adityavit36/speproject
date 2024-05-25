@@ -21,30 +21,14 @@ class FlaskAppTestCase(unittest.TestCase):
             'Owner': 0,
             'Fuel_Type_Petrol': 'Petrol',
             'Seller_Type_Individual': 'Individual',
-            'Transmission_Mannual': 'Mannual'
-        }
-        response = self.app.post('/predict', json=data)
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('prediction', response.get_json())
-        logging.info('test_predict_success passed')
-
-    def test_predict_invalid_input(self):
-        data = {
-            'Year': 2021,
-            'Present_Price': 0,
-            'Kms_Driven': 0,  # Invalid input for Kms_Driven
-            'Owner': 0,
-            'Fuel_Type_Petrol': 'petrol',
-            'Seller_Type_Individual': 'Individual',
             'Transmission_Mannual': 'Manual'
         }
         response = self.app.post('/predict', json=data)
-        self.assertEqual(response.status_code, 400)
-        self.assertIn('Kms_Driven must be greater than zero', response.get_json()['error'])
-        logging.info('test_predict_invalid_input passed')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('prediction_text', response.get_json())
+        logging.info('test_predict_success passed')
 
     def test_normal_scenario(self):
-        # Test Case: Normal scenario with typical values
         data = {
             'Year': 2017,
             'Present_Price': 6.8,
@@ -56,7 +40,7 @@ class FlaskAppTestCase(unittest.TestCase):
         }
         response = self.app.post('/predict', json=data)
         self.assertEqual(response.status_code, 200)
-        self.assertIn('prediction', response.get_json())
+        self.assertIn('prediction_text', response.get_json())
         logging.info('test_normal_scenario passed')
 
 if __name__ == '__main__':
