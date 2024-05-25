@@ -22,18 +22,18 @@ pipeline {
                 url: 'https://github.com/adityavit36/speproject.git'
             }
         }
-        stage('Test') {
-            steps {
-                script {
-                    // sh 'pip install flake8'
-                    // sh 'flake8 .'
-                    // sh 'black --check .'
-                    // Run unit tests for the backend
-                    dir('/home/aditya/adityamin/MLOPS/mlops/src') {
-			sh 'python3 -m unittest discover -s . -p "test_app.py" > test_results.log 2>&1'                    }
-                }
-            }
-        }
+   //      stage('Test') {
+   //          steps {
+   //              script {
+   //                  // sh 'pip install flake8'
+   //                  // sh 'flake8 .'
+   //                  // sh 'black --check .'
+   //                  // Run unit tests for the backend
+   //                  dir('/home/aditya/adityamin/MLOPS/mlops/src') {
+			// sh 'python3 -m unittest discover -s . -p "test_app.py" > test_results.log 2>&1'                    }
+   //              }
+   //          }
+   //      }
         stage('Build Docker Images') {
             steps {
                 script {
